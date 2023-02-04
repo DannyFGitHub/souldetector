@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/souldetector/static/css/main.073c9b0a.css",
+    "main.js": "/souldetector/static/js/main.e580c34b.js",
+    "static/js/787.d98baf49.chunk.js": "/souldetector/static/js/787.d98baf49.chunk.js",
+    "index.html": "/souldetector/index.html",
+    "main.073c9b0a.css.map": "/souldetector/static/css/main.073c9b0a.css.map",
+    "main.e580c34b.js.map": "/souldetector/static/js/main.e580c34b.js.map",
+    "787.d98baf49.chunk.js.map": "/souldetector/static/js/787.d98baf49.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.073c9b0a.css",
+    "static/js/main.e580c34b.js"
+  ]
+}
