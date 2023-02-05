@@ -7,6 +7,8 @@ import {
   addDoc,
   where,
   query,
+  orderBy,
+  serverTimestamp,
 } from "firebase/firestore";
 import { getAuth, signInAnonymously } from "firebase/auth";
 
@@ -44,6 +46,7 @@ async function loadRequests(onLoad) {
   if (auth.currentUser) {
     const myRequestsQuery = query(
       collection(db, "requestQueue"),
+      // orderBy("timestamp", "desc"),
       where("userId", "==", auth.currentUser.uid)
       //   where("status", "==", "processed")
     );
@@ -51,7 +54,7 @@ async function loadRequests(onLoad) {
     myRequests.forEach((doc) => {
       const data = doc.data();
       const id = doc.id;
-      onLoad(id, data.requestText, data.response, data.status);
+      onLoad(id, data.requestText, data.response, data.status, data.timestamp);
     });
   }
 }
@@ -62,6 +65,7 @@ export function submitRequest(requestText) {
     userId: auth.currentUser.uid,
     status: "pending",
     requestText,
+    timestamp: serverTimestamp(),
   }).then((docRef) => {
     console.log("Document written with ID: ", docRef.id);
   });
