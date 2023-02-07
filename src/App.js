@@ -1,11 +1,15 @@
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Loader from "react-loaders";
 
 import { submitRequest, loadRequests } from "./firebase";
+
+const AI_THRESHOLD_PERCENTAGE = 80;
 
 function App() {
   const [text, setText] = useState("");
   const [requests, setRequests] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   function onSubmitRequest() {
     if (text.length >= 100) {
@@ -15,11 +19,20 @@ function App() {
     }
   }
 
+  // Refresh every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsLoading(true);
+      onLoadRequests();
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [isLoading]);
+
   function onLoadRequests() {
     console.log("Loading requests...");
-    loadRequests(function (id, request, response, status, timestamp) {
+    loadRequests(function (total, id, request, response, status, timestamp) {
       setRequests((prev) => {
-        return {
+        let updatedRequestsObject = {
           ...prev,
           [id]: {
             request,
@@ -28,6 +41,12 @@ function App() {
             timestamp,
           },
         };
+
+        if (Object.keys(updatedRequestsObject).length === total) {
+          setIsLoading(false);
+        }
+
+        return updatedRequestsObject;
       });
     });
   }
@@ -35,33 +54,45 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Hassoul</h1>
+        <h1>AI Detection</h1>
         <p>
-          <code>Detects the soul behind text</code>
+          <code>NLP Transformer Perplexity Analyzer</code>
         </p>
         <textarea
           className="textarea"
           type="text"
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={(e) =>
+            setText(e.target.value ? e.target.value.replace(/\s+/g, " ") : "")
+          }
         />
         <span>
-          <button className="btn" onClick={onSubmitRequest}>
-            Submit
-          </button>
-          <button className="btn" onClick={onLoadRequests}>
+          {!isLoading && (
+            <button className="btn" onClick={onSubmitRequest}>
+              Submit
+            </button>
+          )}
+          {/* <button className="btn" onClick={onLoadRequests}>
             Load
-          </button>
+          </button> */}
         </span>
+        <div>
+          {isLoading ? (
+            <Loader type="line-scale" active />
+          ) : (
+            <span>Scroll to see Requests: {Object.keys(requests).length}</span>
+          )}
+        </div>
         <div className="App-table">
           <table className="table">
             <thead>
               <tr>
                 <th>Request Number</th>
-                <th>Status</th>
-                <th>Text</th>
+                <th>For Text That Begins</th>
                 <th>Stats</th>
-                <th>Description</th>
+                <th>Score</th>
+                <th>AI Percentage</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -91,17 +122,22 @@ function App() {
                       ? request.response[0].label
                       : "No label";
                     stats.description = request.response[1];
+                    stats.aiPercent =
+                      request.response[0]["AI Lines Percent"] +
+                        "% could be AI" ?? "";
+                    stats.pplSTDDisplay =
+                      request.response[0]["Perplexity per line display"] ?? "";
                   } else {
                     stats.status = request.status;
                   }
                   return (
                     <tr key={id}>
                       <td>{index + 1}</td>
-                      <td>{stats.status}</td>
-                      <td>{request.request.slice(0, 50) + "..."}</td>
+
+                      <td>{request.request.slice(0, 20) + "..."}</td>
                       <td>
                         <div>
-                          <span>Burstiness: {stats.burstiness}</span>
+                          <span>Max Perplexity: {stats.burstiness}</span>
                         </div>
                         <div>
                           <span>Perplexity: {stats.perplexity}</span>
@@ -111,8 +147,46 @@ function App() {
                             PerplexityPerLine: {stats.perplexityPerLine}
                           </span>
                         </div>
+                        <div>
+                          <span>Std: {stats.pplSTDDisplay}</span>
+                        </div>
                       </td>
                       <td>{stats.description}</td>
+                      <td>
+                        <div
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            backgroundColor: "white",
+                            borderRadius: "5px",
+                            color:
+                              parseFloat(stats.aiPercent) >
+                              AI_THRESHOLD_PERCENTAGE
+                                ? "red"
+                                : "green",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: stats.aiPercent
+                                ? parseFloat(stats.aiPercent) + "%"
+                                : "0%",
+                              height: "100%",
+                              backgroundColor:
+                                parseFloat(stats.aiPercent) >
+                                AI_THRESHOLD_PERCENTAGE
+                                  ? "red"
+                                  : "green",
+                              borderRadius: "5px",
+                              textAlign: "right",
+                              padding: "5px",
+                            }}
+                          ></div>
+                          {stats.aiPercent}
+                        </div>
+                      </td>
+                      <td>{stats.status}</td>
                     </tr>
                   );
                 })}

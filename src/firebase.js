@@ -8,6 +8,7 @@ import {
   where,
   query,
   orderBy,
+  limit,
   serverTimestamp,
 } from "firebase/firestore";
 import { getAuth, signInAnonymously } from "firebase/auth";
@@ -44,17 +45,28 @@ if (!auth.currentUser) {
 
 async function loadRequests(onLoad) {
   if (auth.currentUser) {
+    const currentLimit = 5;
+
     const myRequestsQuery = query(
       collection(db, "requestQueue"),
       // orderBy("timestamp", "desc"),
-      where("userId", "==", auth.currentUser.uid)
+      where("userId", "==", auth.currentUser.uid),
       //   where("status", "==", "processed")
+      limit(currentLimit)
     );
     const myRequests = await getDocs(myRequestsQuery);
+    const total = myRequests.size;
     myRequests.forEach((doc) => {
       const data = doc.data();
       const id = doc.id;
-      onLoad(id, data.requestText, data.response, data.status, data.timestamp);
+      onLoad(
+        total,
+        id,
+        data.requestText,
+        data.response,
+        data.status,
+        data.timestamp
+      );
     });
   }
 }
