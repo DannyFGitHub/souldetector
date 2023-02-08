@@ -54,7 +54,26 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>AI Detection</h1>
+        <div
+          className="App-logo-container"
+          style={{
+            marginBottom: "20px",
+            marginTop: "20px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div style={{ marginRight: "10px" }}>
+            <img
+              src={process.env.PUBLIC_URL + "/logo512.png"}
+              alt="logo"
+              className="App-logo"
+            />
+          </div>
+          <h1>AI Detection</h1>
+        </div>
         <p>
           <code>NLP Transformer Perplexity Analyzer</code>
         </p>
