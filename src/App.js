@@ -86,11 +86,9 @@ function App() {
           }
         />
         <span>
-          {!isLoading && (
-            <button className="btn" onClick={onSubmitRequest}>
-              Submit
-            </button>
-          )}
+          <button className="btn" onClick={onSubmitRequest}>
+            Submit
+          </button>
           {/* <button className="btn" onClick={onLoadRequests}>
             Load
           </button> */}
@@ -99,7 +97,11 @@ function App() {
           {isLoading ? (
             <Loader type="line-scale" active />
           ) : (
-            <span>Scroll to see Requests: {Object.keys(requests).length}</span>
+            <span
+              style={{ color: "white", marginTop: "10px", fontSize: "1.5rem" }}
+            >
+              Scroll to see {Object.keys(requests).length} submissions
+            </span>
           )}
         </div>
         <div className="App-table">
