@@ -14,6 +14,7 @@ function App() {
   function onSubmitRequest() {
     if (text.length >= 100) {
       submitRequest(text);
+      setText("");
     } else {
       alert("Please enter at least 100 characters");
     }
