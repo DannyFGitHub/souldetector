@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/souldetector/static/css/main.6ee626b0.css",
-    "main.js": "/souldetector/static/js/main.511f0498.js",
+    "main.js": "/souldetector/static/js/main.a9b60d8c.js",
     "index.html": "/souldetector/index.html",
     "main.6ee626b0.css.map": "/souldetector/static/css/main.6ee626b0.css.map",
-    "main.511f0498.js.map": "/souldetector/static/js/main.511f0498.js.map"
+    "main.a9b60d8c.js.map": "/souldetector/static/js/main.a9b60d8c.js.map"
   },
   "entrypoints": [
     "static/css/main.6ee626b0.css",
-    "static/js/main.511f0498.js"
+    "static/js/main.a9b60d8c.js"
   ]
 }
